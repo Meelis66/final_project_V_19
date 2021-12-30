@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences_kool/data/shared_pref.dart';
+import 'package:shared_preferences_kool/screens/notes.dart';
+import 'package:shared_preferences_kool/screens/posts.dart';
+import '../screens/passwords.dart';
+import '../screens/settings.dart';
+
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int settingColor = 0xff1976d2;
+  double fontSize = 16;
+  late SPSettings settings;
+  @override
+  void initState() {
+    settings = SPSettings();
+    getSettings();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: getSettings(),
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        return Scaffold(
+          appBar: AppBar(
+            backgroundColor: Color(settingColor),
+            title: Text('Final App'),
+          ),
+          drawer: Drawer(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  child: Text('Final App Menu',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                      )),
+                  decoration: BoxDecoration(
+                    color: Color(settingColor),
+                  ),
+                ),
+                ListTile(
+                  title: Text(
+                    'Settings',
+                    style: TextStyle(
+                      fontSize: fontSize,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SettingsScreen()));
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'Passwords',
+                    style: TextStyle(
+                      fontSize: fontSize,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => PasswordsScreen()));
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'Notes',
+                    style: TextStyle(
+                      fontSize: fontSize,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => NotesScreen()));
+                  },
+                ),
+                ListTile(
+                  title: Text(
+                    'Blog Posts',
+                    style: TextStyle(
+                      fontSize: fontSize,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => PostsScreen()));
+                  },
+                ),
+              ],
+            ),
+          ),
+          body: Container(
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/travel.jpg'), fit: BoxFit.cover)),
+          ),
+        );
+      },
+    );
+  }
+
+  Future getSettings() async {
+    settings = SPSettings();
+    settings.init().then((value) {
+      setState(() {
+        settingColor = settings.getColor();
+        fontSize = settings.getFontSize()!;
+      });
+    });
+  }
+}
